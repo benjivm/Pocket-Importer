@@ -1,0 +1,25 @@
+#!/usr/bin/env php
+<?php
+
+require __DIR__.'/vendor/autoload.php';
+
+use App\Authenticate;
+use App\Import;
+use Illuminate\Console\Application;
+use Illuminate\Container\Container;
+use Illuminate\Events\Dispatcher;
+
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+$dotenv->required('POCKET_CONSUMER_KEY');
+
+$container = new Container();
+$events = new Dispatcher($container);
+
+$app = new Application($container, $events, 'Version 1');
+$app->setName('Pocket Importer');
+
+$app->resolve(Authenticate::class);
+$app->resolve(Import::class);
+
+$app->run();
